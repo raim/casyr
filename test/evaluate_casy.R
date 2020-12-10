@@ -25,7 +25,7 @@ unique(apply(sizes,1,function(x) length(unique(x))))
 size <- sizes[,1]
 size[which(duplicated(size))] <- size[which(duplicated(size))]+.005
 
-idx <- size>=1 & size<=6
+idx <- size>=1 & size<=4
 
 png("20201127_casy.png", width=400, height=200)
 par(mai=c(.5,.5,.1,.1),mgp=c(1.3,.4,0),tcl=-.25)
