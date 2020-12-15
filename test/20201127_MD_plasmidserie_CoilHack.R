@@ -22,8 +22,6 @@ min.counts <- 1.5
 max.counts <- 5
 min.norm <- min.counts
 max.norm <- max.counts
-size.counts <- size>=min.counts & size<=max.counts
-size.norm   <- size>=min.norm & size<=max.norm
 
 ## TODO
 ## *calculate median and peak sizes/volumes
@@ -49,6 +47,10 @@ for ( i in 0:8 ) {
 ## check that all sizes are the same
 unique(apply(sizes,1,function(x) length(unique(x))))
 size <- sizes[,1]
+
+## size filters
+size.counts <- size>=min.counts & size<=max.counts
+size.norm   <- size>=min.norm & size<=max.norm
 
 ## add half of difference to duplicate x (size) values
 dups <- which(duplicated(size))

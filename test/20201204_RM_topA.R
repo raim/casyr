@@ -9,7 +9,7 @@ d2v <- function(x) (x/2)^3*pi *4/3
 
 expid <- "20201204_RM_topA"
 PATH <- "/mnt/synmibi/Studierende/DATA/CASY/"
-##PATH <- "/data/synmibi"
+PATH <- "/data/synmibi"
 
 in.path <- file.path(PATH,expid)
 
@@ -24,8 +24,6 @@ min.counts <- 1.5
 max.counts <- 5
 min.norm <- min.counts
 max.norm <- max.counts
-size.counts <- size>=min.counts & size<=max.counts
-size.norm   <- size>=min.norm & size<=max.norm
 
 ## TODO
 ## *calculate median and peak sizes/volumes
@@ -62,6 +60,10 @@ sampleIDs <- sampleIDs[filter]
 if ( unique(apply(sizes,1,function(x) length(unique(x))))!=1 )
     stop("different size vectors!")
 size <- sizes[,1]
+
+## filters
+size.counts <- size>=min.counts & size<=max.counts
+size.norm   <- size>=min.norm & size<=max.norm
 
 ## add half of difference to duplicate x (size) values
 dups <- which(duplicated(size))
