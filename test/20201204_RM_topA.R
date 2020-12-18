@@ -9,16 +9,18 @@ d2v <- function(x) (x/2)^3*pi *4/3
 
 expid <- "20201204_RM_topA"
 PATH <- "/mnt/synmibi/Studierende/DATA/CASY/"
-PATH <- "/data/synmibi"
+PATH <- "/data/synmibi/CASY"
 
 in.path <- file.path(PATH,expid)
+out.path <- file.path("~/work/CoilHack/experiments/reactor/pcc6803/",
+                      expid,"analysis")
 
 ## experiment parameters
 dil <- 3000
 
 ## analysis&plot parameters
 normalize <- TRUE
-max.cnt <- 15.83e6 # max cell count for color scheme breaks
+max.cnt <- 10e6 # max cell count for color scheme breaks
 ## size filter
 min.counts <- 1.5
 max.counts <- 5
@@ -52,9 +54,12 @@ for ( i in seq_along(files) ) {
 
 ## filter data
 filter <- grep("SAMPLE",sampleIDs)
+filter <- filter[grep("_[A-Z]", sampleIDs[filter], invert=TRUE)]
 counts <- counts[,filter]
 sizes <- sizes[,filter]
 sampleIDs <- sampleIDs[filter]
+
+sampleLabels <- sub(" .*","",sub("SAMPLE_","",sampleIDs))
 
 ## check that all sizes are the same
 if ( unique(apply(sizes,1,function(x) length(unique(x))))!=1 )
@@ -96,12 +101,13 @@ if ( normalize ) {
 counts.nrm <- apply(counts.nrm,2,ma)
 
 
-png(paste0(expid,".png"), width=400, height=200)
-par(mai=c(.5,1,.1,.5),mgp=c(1.3,.4,0),tcl=-.25,xaxs="i",yaxs="i")
+png(file.path(out.path,paste0(expid,"_CASY.png")),
+    width=2*3.5, height=2*3.5, units="in", res=300)
+par(mfcol=c(2,1),mai=c(.5,1,.1,.5),mgp=c(1.3,.4,0),tcl=-.25,xaxs="i",yaxs="i")
 image(y=d2v(size[idx]),x=1:ncol(counts),z=t(counts.nrm), col=cols,breaks=brks,
-      ylab=expression("cell volume, "*fL), xlab="sample",ylim=c(0,30),
+      ylab=expression("cell volume, "*fL), xlab="",ylim=c(0,30),
       axes=FALSE)
-axis(1, at=1:ncol(counts), label=sub("SAMPLE_","",sampleIDs),las=2)
+axis(1, at=1:ncol(counts), label=sampleLabels,las=2)
 axis(2)
 box()
 par(new=TRUE)
@@ -120,13 +126,13 @@ axis(2,col="black",col.axis="black",line=par("mgp")[1]*2)
 mtext(expression("total cell volume, "*mu*L/mL),2, 3*par("mgp")[1],col="black")
 legend("topleft",c("cell count","total cell volume"),pch=c(19,3),
        col=c("red","white"),bty="n",text.col="white",pt.lwd=c(1,2))
-dev.off()
+#dev.off()
 
 sample.cols <- rev(viridis::viridis(ncol(counts)))
 
-png(paste0(expid,"_raw.png"), width=400, height=200)
-par(mai=c(.5,.5,.1,.1),mgp=c(1.3,.4,0),tcl=-.25,xaxs="i",yaxs="i")
-matplot(d2v(size), counts,type="l",lty=1,xlim=c(0,30),col=sample.cols,xlab=expression("cell volume, "*fL),ylim=c(0,1.75e7))
-legend("topright", sub("SAMPLE_","",sampleIDs), title="Samples:",col=sample.cols, lty=1,y.intersp=.7)
+#png(paste0(expid,"_raw.png"), width=400, height=200)
+#par(mai=c(.5,.5,.1,.1),mgp=c(1.3,.4,0),tcl=-.25,xaxs="i",yaxs="i")
+matplot(d2v(size), counts,type="l",lty=1,xlim=c(0,30),col=sample.cols,xlab=expression("cell volume, "*fL),ylim=c(0,1.1e7))
+legend("topright", sampleLabels, col=sample.cols, lty=1,y.intersp=.6,cex=.6,bty="n")
 dev.off()
 
